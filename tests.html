@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SplitTip — Tests</title>
+    <style>
+      :root {
+        --ink: #13232b;
+        --pass: #0f6e6a;
+        --fail: #9b2c2c;
+        --bg: #e7f1f4;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+        background: linear-gradient(165deg, #dfecee, var(--bg));
+        color: var(--ink);
+        padding: 2rem 1.25rem;
+      }
+
+      main {
+        width: min(640px, 100%);
+        margin: 0 auto;
+        background: #f5fafb;
+        border: 1px solid rgba(19, 35, 43, 0.12);
+        border-radius: 18px;
+        padding: 1.5rem;
+        box-shadow: 0 18px 40px rgba(19, 35, 43, 0.08);
+      }
+
+      h1 {
+        margin: 0 0 0.35rem;
+        font-size: 1.6rem;
+      }
+
+      .summary {
+        margin: 0 0 1.25rem;
+        color: #3a5360;
+      }
+
+      ol {
+        margin: 0;
+        padding-left: 1.2rem;
+      }
+
+      li {
+        margin: 0.55rem 0;
+        font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+        font-size: 0.95rem;
+      }
+
+      .pass {
+        color: var(--pass);
+      }
+
+      .fail {
+        color: var(--fail);
+      }
+
+      a {
+        color: #0a4f4c;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>SplitTip tests</h1>
+      <p class="summary" id="summary">Running…</p>
+      <ol id="results"></ol>
+      <p><a href="index.html">← Back to app</a></p>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+      (function () {
+        const resultsEl = document.getElementById("results");
+        const summaryEl = document.getElementById("summary");
+        let passed = 0;
+        let failed = 0;
+
+        function almostEqual(a, b, epsilon) {
+          return Math.abs(a - b) < (epsilon || 0.0001);
+        }
+
+        function assert(name, condition) {
+          const li = document.createElement("li");
+          if (condition) {
+            passed += 1;
+            li.className = "pass";
+            li.textContent = "PASS — " + name;
+          } else {
+            failed += 1;
+            li.className = "fail";
+            li.textContent = "FAIL — " + name;
+          }
+          resultsEl.appendChild(li);
+        }
+
+        assert(
+          "calculateTip is exported on window",
+          typeof window.calculateTip === "function"
+        );
+
+        const standard = window.calculateTip(100, 20, 2);
+        assert(
+          "standard tip: tipAmount is 20 for $100 @ 20%",
+          !standard.error && almostEqual(standard.tipAmount, 20)
+        );
+        assert(
+          "standard tip: total is 120",
+          !standard.error && almostEqual(standard.total, 120)
+        );
+        assert(
+          "standard tip: tipPerPerson is 10",
+          !standard.error && almostEqual(standard.tipPerPerson, 10)
+        );
+        assert(
+          "standard tip: totalPerPerson is 60",
+          !standard.error && almostEqual(standard.totalPerPerson, 60)
+        );
+
+        const zeroTip = window.calculateTip(50, 0, 1);
+        assert(
+          "zero tip leaves total equal to bill",
+          !zeroTip.error &&
+            almostEqual(zeroTip.tipAmount, 0) &&
+            almostEqual(zeroTip.total, 50)
+        );
+
+        const negativeBill = window.calculateTip(-10, 15, 1);
+        assert(
+          "negative bill returns an error",
+          Boolean(negativeBill.error)
+        );
+
+        const negativeTip = window.calculateTip(10, -5, 1);
+        assert(
+          "negative tip percent returns an error",
+          Boolean(negativeTip.error)
+        );
+
+        const badPeople = window.calculateTip(10, 15, 0);
+        assert(
+          "people < 1 returns an error",
+          Boolean(badPeople.error)
+        );
+
+        const fractionalPeople = window.calculateTip(10, 15, 1.5);
+        assert(
+          "non-integer people returns an error",
+          Boolean(fractionalPeople.error)
+        );
+
+        if (typeof window.formatCurrency === "function") {
+          assert(
+            "formatCurrency formats 12.5 as $12.50",
+            window.formatCurrency(12.5) === "$12.50"
+          );
+        } else {
+          assert("formatCurrency is exported on window", false);
+        }
+
+        summaryEl.textContent =
+          failed === 0
+            ? "All " + passed + " assertions PASSED."
+            : passed + " passed, " + failed + " FAILED.";
+        summaryEl.className = "summary " + (failed === 0 ? "pass" : "fail");
+      })();
+    </script>
+  </body>
+</html>
