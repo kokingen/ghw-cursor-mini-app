@@ -40,3 +40,8 @@ Then visit `http://localhost:8080`.
 | `README.md`  | This file                                 |
 
 Built with Cursor (Cursor Agent CLI) for MLH Global Hack Week: Hacktoberfest - Challenge 1: Build a Mini App with Cursor
+
+## Development log
+
+1. Build: Create a small, polished, self-contained Tip Calculator web app in this folder. Requirements: index.html, style.css, app.js (vanilla JS, no build step, no external CDNs). Inputs: bill amount, tip percentage (preset buttons 10/15/18/20/25% plus a custom % field), number of people (min 1). Outputs: tip amount, total, tip per person, total per person — updated live, formatted as currency with 2 decimals. Validate input (no negatives, show an inline error message), include a Reset button, make it responsive and accessible (labels, aria-live for results). Also write a README.md describing the app, how to run it (open index.html), features, and a note "Built with Cursor (Cursor Agent CLI) for MLH Global Hack Week: Hacktoberfest - Challenge 1: Build a Mini App with Cursor". Finally add a tests.html that runs a few assertions on the calculation function exported from app.js and prints PASS/FAIL.
+2. Bug fix: Bug: in index.html/style.css the "$" currency prefix inside the Bill amount input overlaps the typed digits (e.g. "$86.40" renders with the $ on top of the 8). Fix the padding/positioning so the prefix sits left of the text with clear spacing, on all screen sizes. Also check that the "Total / person" highlight box in the results card is not clipped at the bottom. Keep everything else unchanged. Then append a "Development log" section to README.md listing the two prompts used with Cursor Agent CLI (first: build the app; second: this bug fix) in one line each.

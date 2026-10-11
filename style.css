@@ -160,7 +160,8 @@ body {
 }
 
 .field__control--prefix input {
-  padding-left: 1.85rem;
+  /* room for "$" (≈1ch) + gap after the prefix */
+  padding-left: calc(0.95rem + 1ch + 0.5rem);
 }
 
 .field__control--suffix input {
@@ -175,10 +176,11 @@ body {
   color: var(--ink-soft);
   pointer-events: none;
   font-weight: 600;
+  line-height: 1;
 }
 
 .field__prefix {
-  left: 0.85rem;
+  left: 0.95rem;
 }
 
 .field__suffix {
@@ -308,6 +310,9 @@ body {
 
 .results__item:last-child {
   border-bottom: 0;
+}
+
+.results__item:last-child:not(.results__item--emphasis) {
   padding-bottom: 0;
 }
 
